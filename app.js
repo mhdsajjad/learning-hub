@@ -446,6 +446,7 @@ function renderAll() {
   renderSkills();
   renderHistory();
   renderSettings();
+  if (typeof renderTalk === "function") renderTalk(); // ক্লাউড থেকে ডেটা এলে কথা বলা ট্যাবও নতুন করে আঁকা
 }
 
 // ===================== কাজ (actions) =====================

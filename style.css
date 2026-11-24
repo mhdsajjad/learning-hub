@@ -382,3 +382,8 @@ footer { text-align: center; font-size: 0.82rem; margin-top: 40px; }
 .talk-comp p { margin: 0 0 8px; }
 .talk-rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
 .talk-rules li { margin: 6px 0; }
+
+/* নিজের compliment যোগ করার ফর্ম */
+.talk-add { margin-bottom: 12px; }
+.talk-add input { flex: 1; min-width: 160px; }
+.talk-add input[name="say"] { flex: 2; min-width: 240px; }
