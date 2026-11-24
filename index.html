@@ -26,6 +26,7 @@
   <nav class="tabs" id="tabs">
     <button class="tab active" data-tab="today">☀️ আজকে</button>
     <button class="tab" data-tab="skills">🎯 স্কিল ও প্রোগ্রেস</button>
+    <button class="tab" data-tab="talk">💬 কথা বলা</button>
     <button class="tab" data-tab="history">📅 ইতিহাস</button>
     <button class="tab" data-tab="settings">⚙️ সেটিংস</button>
   </nav>
@@ -33,6 +34,7 @@
   <main>
     <section id="view-today" class="view active"></section>
     <section id="view-skills" class="view"></section>
+    <section id="view-talk" class="view"></section>
     <section id="view-history" class="view"></section>
     <section id="view-settings" class="view"></section>
   </main>
@@ -45,7 +47,9 @@
   <input type="file" id="importFile" accept="application/json" hidden />
 
   <script src="data/skills.js"></script>
+  <script src="data/talk.js"></script>
   <script src="app.js"></script>
+  <script src="talk.js"></script>
   <script type="module" src="cloud.js"></script>
 </body>
 </html>

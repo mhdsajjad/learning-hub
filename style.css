@@ -352,3 +352,33 @@ footer { text-align: center; font-size: 0.82rem; margin-top: 40px; }
   .tab { padding: 8px 10px; font-size: 0.9rem; }
   .facts { grid-template-columns: 1fr; }
 }
+
+/* ===== কথা বলা ট্যাব ===== */
+.talk-step { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.talk-step:last-child { border-bottom: 0; }
+.talk-step p { margin: 2px 0 0; }
+.talk-say { font-size: 1.1rem; font-weight: 600; margin: 0 0 8px; }
+.talk-random { text-align: center; margin-bottom: 12px; }
+.talk-group { margin-bottom: 8px; }
+.talk-group summary { cursor: pointer; font-weight: 600; }
+.talk-group li { margin: 6px 0; }
+.talk-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.talk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.talk-comp p { margin: 0 0 8px; }
+.talk-rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.talk-rules li { margin: 6px 0; }
+
+/* ===== কথা বলা ট্যাব ===== */
+.talk-step { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.talk-step:last-child { border-bottom: 0; }
+.talk-step p { margin: 2px 0 0; }
+.talk-say { font-size: 1.1rem; font-weight: 600; margin: 0 0 8px; }
+.talk-random { text-align: center; margin-bottom: 12px; }
+.talk-group { margin-bottom: 8px; }
+.talk-group summary { cursor: pointer; font-weight: 600; }
+.talk-group li { margin: 6px 0; }
+.talk-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.talk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.talk-comp p { margin: 0 0 8px; }
+.talk-rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.talk-rules li { margin: 6px 0; }
