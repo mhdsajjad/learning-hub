@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>আমার শেখার ঘর</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">📚</span>
+      <div>
+        <h1>আমার শেখার ঘর</h1>
+        <p id="todayLabel" class="muted"></p>
+      </div>
+    </div>
+    <div class="stats" id="topStats"></div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tab="today">☀️ আজকে</button>
+    <button class="tab" data-tab="skills">🎯 স্কিল ও প্রোগ্রেস</button>
+    <button class="tab" data-tab="history">📅 ইতিহাস</button>
+    <button class="tab" data-tab="settings">⚙️ সেটিংস</button>
+  </nav>
+
+  <main>
+    <section id="view-today" class="view active"></section>
+    <section id="view-skills" class="view"></section>
+    <section id="view-history" class="view"></section>
+    <section id="view-settings" class="view"></section>
+  </main>
+
+  <footer class="muted">
+    করে করে শেখা 💪 · সব তথ্য শুধু এই ব্রাউজারে সেভ থাকে · মাঝে মাঝে সেটিংস থেকে ব্যাকআপ নিন
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <input type="file" id="importFile" accept="application/json" hidden />
+
+  <script src="data/skills.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
