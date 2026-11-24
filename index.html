@@ -8,6 +8,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <!-- অ্যাপ (PWA) বানানোর জন্য: manifest, থিমের রং, আইকন -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#6c4cf1" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
 </head>
 <body>
   <header class="topbar">
@@ -51,5 +55,11 @@
   <script src="app.js"></script>
   <script src="talk.js"></script>
   <script type="module" src="cloud.js"></script>
+  <script>
+    // সার্ভিস ওয়ার্কার চালু করি (অফলাইনে খোলা আর অ্যাপ হিসেবে ইনস্টলের জন্য)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+    }
+  </script>
 </body>
 </html>
