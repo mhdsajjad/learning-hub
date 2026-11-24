@@ -1,0 +1,11 @@
+rules_version = '2';
+
+// নিরাপত্তার নিয়ম: প্রত্যেকে শুধু নিজের ডকুমেন্ট (users/নিজের-id) পড়তে আর লিখতে পারবে।
+// অন্য কারো ডেটা কেউ দেখতে পারবে না, আর লগইন ছাড়া কিছুই করা যাবে না।
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}

@@ -59,9 +59,9 @@ function newSkillState() {
 
 let state = loadState();
 
-function loadState() {
-  let s = null;
-  try { s = JSON.parse(localStorage.getItem(LS_KEY)); } catch { s = null; }
+function loadState(fromCloud = null) {
+  let s = fromCloud;
+  if (!s) { try { s = JSON.parse(localStorage.getItem(LS_KEY)); } catch { s = null; } }
   const fresh = !s;
   if (fresh) s = { version: 1, skills: {}, customSkills: [] };
   s.customSkills ||= [];
@@ -102,7 +102,23 @@ function applySeed(s) {
   localStorage.setItem(LS_KEY, JSON.stringify(s));
 }
 
-function save() { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+// কিছু বদলালেই সেভ; লগইন করা থাকলে cloud.js এই খবর পেয়ে ক্লাউডেও সেভ করে
+function save() {
+  state.updatedAt = Date.now();
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+  window.dispatchEvent(new Event("hub:saved"));
+}
+
+// cloud.js এর জন্য দরজা: প্রোগ্রেস পড়া আর ক্লাউড থেকে আসা প্রোগ্রেস বসানো
+window.hub = {
+  getState: () => state,
+  replaceState(newState) {
+    state = loadState(newState);
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+    renderAll();
+  },
+  toast: (msg) => toast(msg),
+};
 
 // সব স্কিল (আগে থেকে দেওয়া + নিজের যোগ করা), প্রায়োরিটি অনুযায়ী সাজানো
 function allSkills() {
@@ -408,7 +424,7 @@ function renderSettings() {
     <div class="settings-grid">
       <div class="card">
         <h2>💾 ব্যাকআপ নিন</h2>
-        <p>সব তথ্য শুধু এই ব্রাউজারে আছে। ব্রাউজারের ডেটা মুছলে বা অন্য ফোন/পিসিতে খুললে দেখা যাবে না। মাঝে মাঝে ব্যাকআপ ফাইল ডাউনলোড করে রাখুন।</p>
+        <p>উপরে Google দিয়ে লগইন করলে প্রোগ্রেস ক্লাউডে (Firebase) সেভ হয়, ফোন আর পিসিতে একই থাকে। লগইন না করলে শুধু এই ব্রাউজারে থাকে। বাড়তি নিরাপত্তার জন্য মাঝে মাঝে ব্যাকআপ ফাইলও রাখতে পারেন।</p>
         <button class="btn primary" data-action="export">⬇️ ব্যাকআপ ডাউনলোড</button>
       </div>
       <div class="card">
@@ -586,8 +602,8 @@ document.getElementById("importFile").addEventListener("change", async (e) => {
   try {
     const data = JSON.parse(await file.text());
     if (!data || typeof data.skills !== "object") throw new Error("bad file");
-    localStorage.setItem(LS_KEY, JSON.stringify(data));
-    state = loadState();
+    state = loadState(data);
+    save();
     renderAll();
     toast("✅ ব্যাকআপ থেকে ফেরত আনা হলো");
   } catch {

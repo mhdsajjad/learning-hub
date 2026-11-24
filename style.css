@@ -74,6 +74,26 @@ h1 { font-size: 1.5rem; line-height: 1.2; }
 .stat b { display: block; font-size: 1.3rem; line-height: 1.2; }
 .stat span { font-size: 0.8rem; color: var(--muted); }
 
+/* ===== ক্লাউড লগইন বক্স ===== */
+.cloud-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  min-height: 52px;
+}
+.cloud-note { color: var(--muted); font-size: 0.88rem; }
+.cloud-user { display: flex; align-items: center; gap: 10px; }
+.cloud-user img { width: 34px; height: 34px; border-radius: 50%; }
+.cloud-user b { display: block; font-size: 0.95rem; line-height: 1.2; }
+.cloud-user small { color: var(--muted); font-size: 0.8rem; }
+
 /* ===== ট্যাব ===== */
 .tabs {
   display: flex;

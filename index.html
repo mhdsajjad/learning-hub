@@ -21,6 +21,8 @@
     <div class="stats" id="topStats"></div>
   </header>
 
+  <div class="cloud-box" id="cloudBox"><span class="cloud-note">☁️ ক্লাউড লোড হচ্ছে...</span></div>
+
   <nav class="tabs" id="tabs">
     <button class="tab active" data-tab="today">☀️ আজকে</button>
     <button class="tab" data-tab="skills">🎯 স্কিল ও প্রোগ্রেস</button>
@@ -36,7 +38,7 @@
   </main>
 
   <footer class="muted">
-    করে করে শেখা 💪 · সব তথ্য শুধু এই ব্রাউজারে সেভ থাকে · মাঝে মাঝে সেটিংস থেকে ব্যাকআপ নিন
+    করে করে শেখা 💪 · লগইন করলে প্রোগ্রেস ক্লাউডে সেভ হয় (Firebase)
   </footer>
 
   <div class="toast" id="toast"></div>
@@ -44,5 +46,6 @@
 
   <script src="data/skills.js"></script>
   <script src="app.js"></script>
+  <script type="module" src="cloud.js"></script>
 </body>
 </html>
