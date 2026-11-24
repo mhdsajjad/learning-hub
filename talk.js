@@ -1,16 +1,37 @@
 // ===== কথোপকথন ট্যাব (data/talk.js থেকে ডেটা নেয়) =====
-// esc() আর toast() আসে app.js থেকে
+// esc(), toast(), save(), state আসে app.js থেকে
 
 let talkCat = "সব"; // compliment ফিল্টার
 
 // তালিকা থেকে একটা র‍্যান্ডম জিনিস
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-// আগে থেকে দেওয়া + নিজের যোগ করা compliment একসাথে (নিজেরগুলো state-এ সেভ থাকে)
-function allCompliments() {
-  const mine = (state.myCompliments || []).map((c) => ({ ...c, mine: true }));
-  return mine.concat(COMPLIMENTS);
+// নিজের যোগ করা জিনিস state-এর এই ৩টা তালিকায় সেভ থাকে
+// key = state-এ কোন নামে, base = আগে থেকে দেওয়া তালিকা
+const MINE = {
+  myOpeners: () => OPENERS,
+  myStarters: () => STARTERS,
+  myCompliments: () => COMPLIMENTS,
+};
+
+// আগে থেকে দেওয়া + নিজের যোগ করা একসাথে (নিজেরগুলো আগে, mine: true দাগ দিয়ে)
+function withMine(key) {
+  const mine = (state[key] || []).map((x) => ({ ...x, mine: true }));
+  return mine.concat(MINE[key]());
 }
+
+// নিজের যোগ করা জিনিসে মোছার বাটন
+const delBtn = (key, x) => x.mine
+  ? `<button class="btn small" data-talk="del" data-key="${key}" data-id="${esc(x.id)}">🗑️</button>` : "";
+
+// say + when কার্ড (opener আর compliment দুটোতেই একই ধাঁচ)
+const sayCard = (key, x) => `
+  <div class="card talk-comp">
+    <p class="talk-say">“${esc(x.say)}”</p>
+    <p class="muted">🕐 কখন: ${esc(x.when)}</p>
+    <button class="btn small" data-talk="copy" data-text="${esc(x.say)}">📋 কপি</button>
+    ${delBtn(key, x)}
+  </div>`;
 
 function renderTalk() {
   const el = document.getElementById("view-talk");
@@ -21,23 +42,24 @@ function renderTalk() {
       <div><b>${esc(s.do)}</b><p class="muted">${esc(s.why)}</p></div></div>`).join("");
 
   // প্রশ্নগুলো ধরন অনুযায়ী ভাগ
-  const cats = [...new Set(STARTERS.map((s) => s.cat))];
-  const starters = cats.map((c) => `
-    <details class="card talk-group"><summary>${esc(c)} (${bn(STARTERS.filter((s) => s.cat === c).length)})</summary>
-      <ul>${STARTERS.filter((s) => s.cat === c).map((s) => `<li>${esc(s.q)} <button class="btn small" data-talk="copy" data-text="${esc(s.q)}">📋</button></li>`).join("")}</ul>
-    </details>`).join("");
+  const QS = withMine("myStarters");
+  const cats = [...new Set(QS.map((s) => s.cat))];
+  const starters = cats.map((c) => {
+    const items = QS.filter((s) => s.cat === c);
+    return `
+    <details class="card talk-group"><summary>${esc(c)} (${bn(items.length)})</summary>
+      <ul>${items.map((s) => `<li>${esc(s.q)} <button class="btn small" data-talk="copy" data-text="${esc(s.q)}">📋</button> ${delBtn("myStarters", s)}</li>`).join("")}</ul>
+    </details>`;
+  }).join("");
 
   // compliment ফিল্টার চিপ
-  const ALL = allCompliments();
+  const ALL = withMine("myCompliments");
   const cCats = ["সব", ...new Set(ALL.map((c) => c.cat))];
   const chips = cCats.map((c) => `<button class="btn small ${c === talkCat ? "primary" : ""}" data-talk="cat" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
-  const list = ALL.filter((c) => talkCat === "সব" || c.cat === talkCat).map((c) => `
-    <div class="card talk-comp">
-      <p class="talk-say">“${esc(c.say)}”</p>
-      <p class="muted">🕐 কখন: ${esc(c.when)}</p>
-      <button class="btn small" data-talk="copy" data-text="${esc(c.say)}">📋 কপি</button>
-      ${c.mine ? `<button class="btn small" data-talk="delC" data-id="${esc(c.id)}">🗑️ মুছুন</button>` : ""}
-    </div>`).join("");
+  const list = ALL.filter((c) => talkCat === "সব" || c.cat === talkCat).map((c) => sayCard("myCompliments", c)).join("");
+
+  // ধরন বাছাইয়ের সাজেশন (datalist)
+  const opts = (arr) => arr.map((c) => `<option value="${esc(c)}">`).join("");
 
   el.innerHTML = `
     <div class="section">
@@ -52,12 +74,13 @@ function renderTalk() {
         <p id="talkO" class="talk-say">একটা fun opener নাও 👇</p>
         <button class="btn primary" data-talk="randO">🎲 Opener দাও</button>
       </div>
-      <div class="talk-grid">${OPENERS.map((o) => `
-        <div class="card talk-comp">
-          <p class="talk-say">“${esc(o.say)}”</p>
-          <p class="muted">🕐 কখন: ${esc(o.when)}</p>
-          <button class="btn small" data-talk="copy" data-text="${esc(o.say)}">📋 কপি</button>
-        </div>`).join("")}</div>
+      <form class="card add-form talk-add" data-key="myOpeners">
+        <b style="width:100%">➕ নিজের opener যোগ করো</b>
+        <input name="say" placeholder="কী বলবে? যেমন: অবশেষে কেউ skip করলো না 😄" required />
+        <input name="when" placeholder="কখন বলবে? (ঐচ্ছিক)" />
+        <button class="btn primary" type="submit">যোগ করো</button>
+      </form>
+      <div class="talk-grid">${withMine("myOpeners").map((o) => sayCard("myOpeners", o)).join("")}</div>
     </div>
 
     <div class="section">
@@ -67,6 +90,13 @@ function renderTalk() {
         <p id="talkQ" class="talk-say">বাটন চাপো, একটা প্রশ্ন পাবে 👇</p>
         <button class="btn primary" data-talk="randQ">🎲 একটা প্রশ্ন দাও</button>
       </div>
+      <form class="card add-form talk-add" data-key="myStarters">
+        <b style="width:100%">➕ নিজের প্রশ্ন যোগ করো</b>
+        <input name="q" placeholder="প্রশ্ন, যেমন: চা না কফি? 😄" required />
+        <input name="cat" placeholder="ধরন (ঐচ্ছিক)" list="qCats" />
+        <datalist id="qCats">${opts(cats)}</datalist>
+        <button class="btn primary" type="submit">যোগ করো</button>
+      </form>
       ${starters}
     </div>
 
@@ -76,12 +106,12 @@ function renderTalk() {
         <p id="talkC" class="talk-say">ভুলে গেলে এখান থেকে একটা নাও 👇</p>
         <button class="btn primary" data-talk="randC">🎲 একটা compliment দাও</button>
       </div>
-      <form class="card add-form talk-add" id="addCompForm">
+      <form class="card add-form talk-add" data-key="myCompliments">
         <b style="width:100%">➕ নিজের compliment যোগ করো</b>
         <input name="say" placeholder="কী বলবে? যেমন: আপনার হাসিটা খুব genuine" required />
         <input name="when" placeholder="কখন বলবে? (ঐচ্ছিক)" />
         <input name="cat" placeholder="ধরন (ঐচ্ছিক)" list="compCats" />
-        <datalist id="compCats">${cCats.slice(1).map((c) => `<option value="${esc(c)}">`).join("")}</datalist>
+        <datalist id="compCats">${opts(cCats.slice(1))}</datalist>
         <button class="btn primary" type="submit">যোগ করো</button>
       </form>
       <div class="talk-chips">${chips}</div>
@@ -94,22 +124,23 @@ function renderTalk() {
     </div>`;
 }
 
+// র‍্যান্ডম বাটনে say + when দেখানো
+const showSay = (id, x) => {
+  document.getElementById(id).innerHTML = `“${esc(x.say)}”<br><small class="muted">🕐 ${esc(x.when)}</small>`;
+};
+
 // এই ট্যাবের সব বাটনের ক্লিক এখানে
 document.getElementById("view-talk").addEventListener("click", async (e) => {
   const b = e.target.closest("[data-talk]");
   if (!b) return;
   const act = b.dataset.talk;
-  if (act === "randQ") document.getElementById("talkQ").textContent = pick(STARTERS).q;
-  else if (act === "randO") {
-    const o = pick(OPENERS);
-    document.getElementById("talkO").innerHTML = `“${esc(o.say)}”<br><small class="muted">🕐 ${esc(o.when)}</small>`;
-  }
-  else if (act === "randC") {
-    const c = pick(allCompliments());
-    document.getElementById("talkC").innerHTML = `“${esc(c.say)}”<br><small class="muted">🕐 ${esc(c.when)}</small>`;
-  } else if (act === "delC") {
-    if (!confirm("এই compliment মুছে ফেলবে?")) return;
-    state.myCompliments = state.myCompliments.filter((c) => c.id !== b.dataset.id);
+  if (act === "randQ") document.getElementById("talkQ").textContent = pick(withMine("myStarters")).q;
+  else if (act === "randO") showSay("talkO", pick(withMine("myOpeners")));
+  else if (act === "randC") showSay("talkC", pick(withMine("myCompliments")));
+  else if (act === "del") {
+    if (!confirm("এটা মুছে ফেলবে?")) return;
+    const key = b.dataset.key;
+    state[key] = (state[key] || []).filter((x) => x.id !== b.dataset.id);
     save(); renderTalk(); toast("🗑️ মুছে ফেলা হয়েছে");
   } else if (act === "cat") { talkCat = b.dataset.cat; renderTalk(); }
   else if (act === "copy") {
@@ -118,24 +149,30 @@ document.getElementById("view-talk").addEventListener("click", async (e) => {
   }
 });
 
-// নতুন compliment যোগ (ফর্ম সাবমিট)
+// নতুন জিনিস যোগ (৩টা ফর্মই এখানে আসে, data-key দেখে বুঝি কোন তালিকায়)
 document.getElementById("view-talk").addEventListener("submit", (e) => {
-  if (e.target.id !== "addCompForm") return;
+  const key = e.target.dataset.key;
+  if (!MINE[key]) return;
   e.preventDefault();
   const f = new FormData(e.target);
-  const say = f.get("say").trim();
-  if (!say) return;
-  state.myCompliments ||= [];
-  state.myCompliments.unshift({
-    id: "my" + Date.now(),
-    say,
-    when: f.get("when").trim() || "নিজের যোগ করা",
-    cat: f.get("cat").trim() || "আমার",
-  });
+  const val = (name) => (f.get(name) || "").trim();
+  const item = { id: "my" + Date.now() };
+  if (key === "myStarters") {
+    item.q = val("q");
+    if (!item.q) return;
+    item.cat = val("cat") || "আমার";
+  } else {
+    item.say = val("say");
+    if (!item.say) return;
+    item.when = val("when") || "নিজের যোগ করা";
+    if (key === "myCompliments") item.cat = val("cat") || "আমার";
+  }
+  state[key] ||= [];
+  state[key].unshift(item);
   save(); // লোকাল + লগইন থাকলে ক্লাউডে
-  talkCat = "সব";
+  if (key === "myCompliments") talkCat = "সব";
   renderTalk();
-  toast("✅ compliment যোগ হয়েছে");
+  toast("✅ যোগ হয়েছে");
 });
 
 renderTalk();
