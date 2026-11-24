@@ -38,8 +38,23 @@ function renderTalk() {
     </div>
 
     <div class="section">
-      <h2>💬 কথা শুরুর প্রশ্ন</h2>
-      <p class="muted">‘কেমন আছেন, নাম কী’ এর বদলে এগুলো জিজ্ঞেস করো, মানুষ নিজের গল্প বলতে শুরু করবে।</p>
+      <h2>🎯 হঠাৎ মনোযোগ কাড়া কথা</h2>
+      <p class="muted">Unexpected বা মজার একটা লাইন, যাতে মানুষের autopilot ভেঙে পুরো attention তোমার দিকে আসে। হুবহু না বলে নিজের style-এ বলো।</p>
+      <div class="card talk-random">
+        <p id="talkO" class="talk-say">একটা fun opener নাও 👇</p>
+        <button class="btn primary" data-talk="randO">🎲 Opener দাও</button>
+      </div>
+      <div class="talk-grid">${OPENERS.map((o) => `
+        <div class="card talk-comp">
+          <p class="talk-say">“${esc(o.say)}”</p>
+          <p class="muted">🕐 কখন: ${esc(o.when)}</p>
+          <button class="btn small" data-talk="copy" data-text="${esc(o.say)}">📋 কপি</button>
+        </div>`).join("")}</div>
+    </div>
+
+    <div class="section">
+      <h2>💬 কথা চালিয়ে নেওয়ার প্রশ্ন</h2>
+      <p class="muted">‘কেমন আছেন, কী অবস্থা’-এর বদলে এগুলো। মানুষ ‘ভালো’ বলে থামবে না, নিজের গল্প বলতে শুরু করবে।</p>
       <div class="card talk-random">
         <p id="talkQ" class="talk-say">বাটন চাপো, একটা প্রশ্ন পাবে 👇</p>
         <button class="btn primary" data-talk="randQ">🎲 একটা প্রশ্ন দাও</button>
@@ -69,6 +84,10 @@ document.getElementById("view-talk").addEventListener("click", async (e) => {
   if (!b) return;
   const act = b.dataset.talk;
   if (act === "randQ") document.getElementById("talkQ").textContent = pick(STARTERS).q;
+  else if (act === "randO") {
+    const o = pick(OPENERS);
+    document.getElementById("talkO").innerHTML = `“${esc(o.say)}”<br><small class="muted">🕐 ${esc(o.when)}</small>`;
+  }
   else if (act === "randC") {
     const c = pick(COMPLIMENTS);
     document.getElementById("talkC").innerHTML = `“${esc(c.say)}”<br><small class="muted">🕐 ${esc(c.when)}</small>`;
