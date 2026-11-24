@@ -69,7 +69,23 @@ function loadState() {
     if (!s.skills[def.id]) s.skills[def.id] = newSkillState();
   }
   if (fresh) applySeed(s);
+  else fixOldSeed(s);
   return s;
+}
+
+// পুরনো ভার্সনে ভুল করে বসানো লেসনগুলো সরানো (একবারই চলে)
+function fixOldSeed(s) {
+  if (s.seedFix1) return;
+  for (const [lessonId, date] of Object.entries(SEED_REMOVED)) {
+    const def = SKILLS.find((sk) => sk.lessons.some((l) => l.id === lessonId));
+    const st = def && s.skills[def.id];
+    if (st && st.done[lessonId] === date) {
+      delete st.done[lessonId];
+      unlogIfEmpty(st, date);
+    }
+  }
+  s.seedFix1 = true;
+  localStorage.setItem(LS_KEY, JSON.stringify(s));
 }
 
 // আগে শেখা লেসনগুলো প্রথমবার বসিয়ে দেওয়া
@@ -82,6 +98,7 @@ function applySeed(s) {
     st.done[lessonId] = date;
     logSession(st, date);
   }
+  s.seedFix1 = true;
   localStorage.setItem(LS_KEY, JSON.stringify(s));
 }
 

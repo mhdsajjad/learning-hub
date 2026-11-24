@@ -364,7 +364,11 @@ const SEED_HISTORY = {
   done: {
     "pc-clipboard": "2026-11-23",
     "pc-startup": "2026-11-23",
-    "pc-storage-sense": "2026-11-24",
-    "pc-volume-mixer": "2026-11-24",
   },
+};
+
+// আগের ভার্সনে ভুল করে "শেষ" বসানো লেসন (এগুলো শুধু পড়ানো হয়েছিল, করা হয়নি)
+const SEED_REMOVED = {
+  "pc-storage-sense": "2026-11-24",
+  "pc-volume-mixer": "2026-11-24",
 };
